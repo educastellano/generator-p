@@ -5,13 +5,19 @@ var yeoman = require('yeoman-generator');
 
 
 var PGenerator = module.exports = function PGenerator(args, options, config) {
-  yeoman.generators.Base.apply(this, arguments);
+    yeoman.generators.Base.apply(this, arguments);
 
-  this.on('end', function () {
-    this.installDependencies({ skipInstall: options['skip-install'] });
-  });
+    this.indexFile = this.readFileAsString(path.join(this.sourceRoot(), 'index.html'));
 
-  this.pkg = JSON.parse(this.readFileAsString(path.join(__dirname, '../package.json')));
+    this.bowerScripts = [
+        'bower_components/jquery/jquery.js'
+    ];
+
+    this.on('end', function () {
+        this.installDependencies({ skipInstall: options['skip-install'] });
+    });
+
+    this.pkg = JSON.parse(this.readFileAsString(path.join(__dirname, '../package.json')));
 };
 
 util.inherits(PGenerator, yeoman.generators.Base);
@@ -62,15 +68,20 @@ PGenerator.prototype.askFor = function askFor() {
 };
 
 PGenerator.prototype.app = function app() {
-  this.mkdir('app');
-  this.mkdir('app/templates');
-  this.mkdir('app/model');
-  this.mkdir('app/view');
+    this.mkdir('app');
+    this.mkdir('app/templates');
+    this.mkdir('app/styles');
+    this.mkdir('app/img');
+    this.mkdir('app/model');
+    this.mkdir('app/view');
 
-  this.template('app/__init__.js', 'app/__init__.js');
+    this.template('scripts/__init__.js', 'app/__init__.js');
+    this.template('scripts/app.js', 'app/app.js');
+    this.write('app/index.html', this.indexFile);
 
-  this.copy('_package.json', 'package.json');
-  this.copy('_bower.json', 'bower.json');
+    this.copy('_package.json', 'package.json');
+    this.copy('_bower.json', 'bower.json');
+    this.copy('gitignore', '.gitignore');
 };
 
 PGenerator.prototype.projectfiles = function projectfiles() {

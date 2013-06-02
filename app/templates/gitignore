@@ -1,0 +1,5 @@
+node_modules
+nohup.out
+local_settings.js
+.DS_Store
+.idea
